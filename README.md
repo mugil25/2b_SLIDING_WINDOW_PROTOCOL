@@ -1,5 +1,8 @@
 # 2b IMPLEMENTATION OF SLIDING WINDOW PROTOCOL
+### NAME : MUGIL M.
+### REGISTER NUMBER : 212223230127
 ## AIM
+To write a python program to perform sliding window protocol
 ## ALGORITHM:
 1. Start the program.
 2. Get the frame size from the user
@@ -8,6 +11,64 @@
 5. If your frames reach the server it will send ACK signal to client
 6. Stop the Program
 ## PROGRAM
+### server:
+```python
+import socket
+s = socket.socket()
+s.bind(('localhost', 9999))
+s.listen(1)
+print("Server listening...")
+conn, addr = s.accept()
+print(f"Connected to {addr}")
+
+while True:
+    frames = conn.recv(1024).decode()
+    if not frames:
+        break
+
+    print(f"Received frames: {frames}")
+    ack_message = f"ACK for frames: {frames}"
+    conn.send(ack_message.encode())
+
+conn.close()  
+s.close()  
+```
+
+### client:
+```python
+import socket
+c = socket.socket()
+c.connect(('localhost', 9999))
+
+size = int(input("Enter number of frames to send: "))
+l = list(range(size))  
+print("Total frames to send:", len(l))
+s = int(input("Enter Window Size: "))
+
+i = 0
+while True:
+    while i < len(l):
+        st = i + s
+        frames_to_send = l[i:st]  
+        print(f"Sending frames: {frames_to_send}")
+        c.send(str(frames_to_send).encode())  
+
+        ack = c.recv(1024).decode()  
+        if ack:
+            print(f"Acknowledgment received: {ack}")
+            i += s  
+
+    break
+c.close()  
+
+```
 ## OUPUT
+
+### server
+![image-1](https://github.com/user-attachments/assets/6d43e540-42d3-4672-808a-31ab96956b40)
+
+### client
+![image](https://github.com/user-attachments/assets/da382184-1f8e-4a88-acec-48ebf5ffb13e)
+
 ## RESULT
 Thus, python program to perform stop and wait protocol was successfully executed
